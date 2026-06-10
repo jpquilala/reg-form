@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS public.players (
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
   birth_date DATE NOT NULL,
-  age INTEGER NOT NULL CHECK (age BETWEEN 40 AND 90),
+  age INTEGER NOT NULL CHECK (age BETWEEN 30 AND 90),
   contact_number TEXT NOT NULL,
   email TEXT,
   team_name TEXT NOT NULL,
@@ -18,6 +18,12 @@ CREATE TABLE IF NOT EXISTS public.players (
 
 CREATE INDEX IF NOT EXISTS players_registered_at_idx
 ON public.players (registered_at DESC);
+
+ALTER TABLE public.players
+DROP CONSTRAINT IF EXISTS players_age_check;
+
+ALTER TABLE public.players
+ADD CONSTRAINT players_age_check CHECK (age BETWEEN 30 AND 90);
 
 ALTER TABLE public.players ENABLE ROW LEVEL SECURITY;
 

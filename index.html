@@ -166,11 +166,11 @@
       box-shadow: 0 0 0 3px rgba(217, 173, 85, 0.18);
     }
 
-    .height-select {
+    .custom-select {
       position: relative;
     }
 
-    .height-toggle {
+    .custom-select-toggle {
       width: 100%;
       min-height: 44px;
       display: flex;
@@ -186,7 +186,7 @@
       text-align: left;
     }
 
-    .height-toggle::after {
+    .custom-select-toggle::after {
       content: "";
       width: 0;
       height: 0;
@@ -196,12 +196,12 @@
       flex: 0 0 auto;
     }
 
-    .height-select.open .height-toggle {
+    .custom-select.open .custom-select-toggle {
       border-color: var(--gold);
       box-shadow: 0 0 0 3px rgba(217, 173, 85, 0.18);
     }
 
-    .height-menu {
+    .custom-select-menu {
       position: absolute;
       z-index: 12;
       top: calc(100% + 4px);
@@ -219,11 +219,11 @@
       box-shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
     }
 
-    .height-select.open .height-menu {
+    .custom-select.open .custom-select-menu {
       display: block;
     }
 
-    .height-menu button {
+    .custom-select-menu button {
       width: 100%;
       min-height: 40px;
       border: 0;
@@ -235,8 +235,8 @@
       text-align: left;
     }
 
-    .height-menu button:hover,
-    .height-menu button:focus {
+    .custom-select-menu button:hover,
+    .custom-select-menu button:focus {
       background: rgba(217, 173, 85, 0.18);
       outline: none;
     }
@@ -530,7 +530,7 @@
       </div>
       <div>
         <h1>Player Registration</h1>
-        <p>Register Velvet Masters League players directly into the official online database. Admins can download the roster as a CSV file using the export password.</p>
+        <p>Register Velvet Masters League players directly into the official online database.</p>
       </div>
     </header>
 
@@ -559,7 +559,7 @@
 
           <div class="field">
             <label for="age">Age</label>
-            <input id="age" name="age" type="number" min="40" max="90" placeholder="40+" required>
+            <input id="age" name="age" type="number" min="30" max="90" placeholder="30+" required>
           </div>
 
           <div class="field">
@@ -584,25 +584,23 @@
 
           <div class="field">
             <label for="position">Position</label>
-            <select id="position" name="position" required>
-              <option value="">Select position</option>
-              <option>Point Guard</option>
-              <option>Shooting Guard</option>
-              <option>Small Forward</option>
-              <option>Power Forward</option>
-              <option>Center</option>
-              <option>Utility</option>
-            </select>
+            <div class="custom-select" id="positionSelect">
+              <input id="position" name="position" type="hidden" required>
+              <button class="custom-select-toggle" type="button" id="positionToggle" aria-haspopup="listbox" aria-expanded="false">
+                <span id="positionLabel">Select position</span>
+              </button>
+              <ul class="custom-select-menu" id="positionMenu" role="listbox" aria-label="Position"></ul>
+            </div>
           </div>
 
           <div class="field">
             <label for="height">Height</label>
-            <div class="height-select" id="heightSelect">
+            <div class="custom-select" id="heightSelect">
               <input id="height" name="height" type="hidden">
-              <button class="height-toggle" type="button" id="heightToggle" aria-haspopup="listbox" aria-expanded="false">
+              <button class="custom-select-toggle" type="button" id="heightToggle" aria-haspopup="listbox" aria-expanded="false">
                 <span id="heightLabel">Select height</span>
               </button>
-              <ul class="height-menu" id="heightMenu" role="listbox" aria-label="Height"></ul>
+              <ul class="custom-select-menu" id="heightMenu" role="listbox" aria-label="Height"></ul>
             </div>
           </div>
 
@@ -706,6 +704,11 @@
     const resetForm = document.querySelector('#resetForm');
     const birthDate = document.querySelector('#birthDate');
     const age = document.querySelector('#age');
+    const position = document.querySelector('#position');
+    const positionSelect = document.querySelector('#positionSelect');
+    const positionToggle = document.querySelector('#positionToggle');
+    const positionLabel = document.querySelector('#positionLabel');
+    const positionMenu = document.querySelector('#positionMenu');
     const height = document.querySelector('#height');
     const heightSelect = document.querySelector('#heightSelect');
     const heightToggle = document.querySelector('#heightToggle');
@@ -722,36 +725,104 @@
       position: document.querySelector('#confirmPosition'),
       contactNumber: document.querySelector('#confirmContactNumber')
     };
+    const positionOptions = [
+      'Point Guard',
+      'Shooting Guard',
+      'Small Forward',
+      'Power Forward',
+      'Center',
+      'Utility'
+    ];
 
-    function populateHeightOptions() {
-      for (let totalInches = 48; totalInches <= 84; totalInches += 1) {
-        const feet = Math.floor(totalInches / 12);
-        const inches = totalInches % 12;
-        const value = `${feet}'${inches}"`;
+    function createCustomSelect(config) {
+      const {
+        input,
+        label,
+        menu,
+        options,
+        placeholder,
+        root,
+        toggle
+      } = config;
+
+      options.forEach((value) => {
         const item = document.createElement('li');
         const option = document.createElement('button');
         option.type = 'button';
         option.textContent = value;
         option.setAttribute('role', 'option');
         option.addEventListener('click', () => {
-          height.value = value;
-          heightLabel.textContent = value;
-          closeHeightMenu();
+          input.value = value;
+          label.textContent = value;
+          closeCustomSelect(config);
         });
         item.append(option);
-        heightMenu.append(item);
+        menu.append(item);
+      });
+
+      toggle.addEventListener('click', () => {
+        if (root.classList.contains('open')) {
+          closeCustomSelect(config);
+        } else {
+          openCustomSelect(config);
+        }
+      });
+    }
+
+    function openCustomSelect(config) {
+      closeAllCustomSelects(config.root);
+      config.root.classList.add('open');
+      config.toggle.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeCustomSelect(config) {
+      config.root.classList.remove('open');
+      config.toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function closeAllCustomSelects(exceptRoot) {
+      customSelects.forEach((config) => {
+        if (config.root !== exceptRoot) {
+          closeCustomSelect(config);
+        }
+      });
+    }
+
+    function resetCustomSelect(config) {
+      config.input.value = '';
+      config.label.textContent = config.placeholder;
+      closeCustomSelect(config);
+    }
+
+    function getHeightOptions() {
+      const options = [];
+      for (let totalInches = 48; totalInches <= 84; totalInches += 1) {
+        const feet = Math.floor(totalInches / 12);
+        const inches = totalInches % 12;
+        options.push(`${feet}'${inches}"`);
       }
+      return options;
     }
-
-    function openHeightMenu() {
-      heightSelect.classList.add('open');
-      heightToggle.setAttribute('aria-expanded', 'true');
-    }
-
-    function closeHeightMenu() {
-      heightSelect.classList.remove('open');
-      heightToggle.setAttribute('aria-expanded', 'false');
-    }
+    const customSelects = [
+      {
+        input: position,
+        label: positionLabel,
+        menu: positionMenu,
+        options: positionOptions,
+        placeholder: 'Select position',
+        root: positionSelect,
+        toggle: positionToggle
+      },
+      {
+        input: height,
+        label: heightLabel,
+        menu: heightMenu,
+        options: getHeightOptions(),
+        placeholder: 'Select height',
+        root: heightSelect,
+        toggle: heightToggle
+      }
+    ];
 
     function showNotice(message, isError = false) {
       notice.textContent = message;
@@ -784,9 +855,7 @@
 
     function resetRegistrationForm() {
       form.reset();
-      height.value = '';
-      heightLabel.textContent = 'Select height';
-      closeHeightMenu();
+      customSelects.forEach(resetCustomSelect);
       formMode.textContent = '';
     }
 
@@ -870,6 +939,12 @@
       const player = playerFromForm();
       const submitButton = form.querySelector('button[type="submit"]');
 
+      if (!player.position) {
+        showNotice('Select position.', true);
+        openCustomSelect(customSelects[0]);
+        return;
+      }
+
       submitButton.disabled = true;
       submitButton.textContent = 'Saving...';
       formMode.textContent = '';
@@ -903,13 +978,6 @@
 
     resetForm.addEventListener('click', resetRegistrationForm);
     downloadCsv.addEventListener('click', downloadRosterCsv);
-    heightToggle.addEventListener('click', () => {
-      if (heightSelect.classList.contains('open')) {
-        closeHeightMenu();
-      } else {
-        openHeightMenu();
-      }
-    });
     closeConfirmation.addEventListener('click', closeConfirmationModal);
     doneConfirmation.addEventListener('click', closeConfirmationModal);
     confirmationModal.addEventListener('click', (event) => {
@@ -920,15 +988,16 @@
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
         closeConfirmationModal();
-        closeHeightMenu();
+        closeAllCustomSelects();
       }
     });
     document.addEventListener('click', (event) => {
-      if (!heightSelect.contains(event.target)) {
-        closeHeightMenu();
+      const clickedInsideCustomSelect = customSelects.some((config) => config.root.contains(event.target));
+      if (!clickedInsideCustomSelect) {
+        closeAllCustomSelects();
       }
     });
-    populateHeightOptions();
+    customSelects.forEach(createCustomSelect);
   </script>
 </body>
 </html>

@@ -28,8 +28,8 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: validationError });
     }
 
-    if (!Number.isInteger(age) || age < 40 || age > 90) {
-      return res.status(400).json({ error: 'Age must be between 40 and 90.' });
+    if (!Number.isInteger(age) || age < 30 || age > 90) {
+      return res.status(400).json({ error: 'Age must be between 30 and 90.' });
     }
 
     const supabase = getSupabase();
