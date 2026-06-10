@@ -433,7 +433,9 @@
 
           <div class="field">
             <label for="height">Height</label>
-            <input id="height" name="height" placeholder="Example: 5'10&quot;">
+            <select id="height" name="height">
+              <option value="">Select height</option>
+            </select>
           </div>
 
           <div class="field">
@@ -498,6 +500,19 @@
     const resetForm = document.querySelector('#resetForm');
     const birthDate = document.querySelector('#birthDate');
     const age = document.querySelector('#age');
+    const height = document.querySelector('#height');
+
+    function populateHeightOptions() {
+      for (let totalInches = 48; totalInches <= 84; totalInches += 1) {
+        const feet = Math.floor(totalInches / 12);
+        const inches = totalInches % 12;
+        const value = `${feet}'${inches}"`;
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        height.append(option);
+      }
+    }
 
     function showNotice(message, isError = false) {
       notice.textContent = message;
@@ -630,6 +645,7 @@
 
     resetForm.addEventListener('click', resetRegistrationForm);
     downloadCsv.addEventListener('click', downloadRosterCsv);
+    populateHeightOptions();
   </script>
 </body>
 </html>
