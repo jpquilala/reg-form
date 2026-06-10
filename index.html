@@ -166,6 +166,81 @@
       box-shadow: 0 0 0 3px rgba(217, 173, 85, 0.18);
     }
 
+    .height-select {
+      position: relative;
+    }
+
+    .height-toggle {
+      width: 100%;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid #4b4439;
+      border-radius: 6px;
+      background: #0f0f0f;
+      color: var(--text);
+      padding: 10px 12px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .height-toggle::after {
+      content: "";
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid var(--gold-2);
+      flex: 0 0 auto;
+    }
+
+    .height-select.open .height-toggle {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(217, 173, 85, 0.18);
+    }
+
+    .height-menu {
+      position: absolute;
+      z-index: 12;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      display: none;
+      max-height: 208px;
+      margin: 0;
+      padding: 4px;
+      border: 1px solid #4b4439;
+      border-radius: 6px;
+      background: #0f0f0f;
+      list-style: none;
+      overflow-y: auto;
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+    }
+
+    .height-select.open .height-menu {
+      display: block;
+    }
+
+    .height-menu button {
+      width: 100%;
+      min-height: 40px;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--text);
+      padding: 9px 10px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .height-menu button:hover,
+    .height-menu button:focus {
+      background: rgba(217, 173, 85, 0.18);
+      outline: none;
+    }
+
     .actions {
       grid-column: 1 / -1;
       display: flex;
@@ -522,9 +597,13 @@
 
           <div class="field">
             <label for="height">Height</label>
-            <select id="height" name="height">
-              <option value="">Select height</option>
-            </select>
+            <div class="height-select" id="heightSelect">
+              <input id="height" name="height" type="hidden">
+              <button class="height-toggle" type="button" id="heightToggle" aria-haspopup="listbox" aria-expanded="false">
+                <span id="heightLabel">Select height</span>
+              </button>
+              <ul class="height-menu" id="heightMenu" role="listbox" aria-label="Height"></ul>
+            </div>
           </div>
 
           <div class="field">
@@ -628,6 +707,10 @@
     const birthDate = document.querySelector('#birthDate');
     const age = document.querySelector('#age');
     const height = document.querySelector('#height');
+    const heightSelect = document.querySelector('#heightSelect');
+    const heightToggle = document.querySelector('#heightToggle');
+    const heightLabel = document.querySelector('#heightLabel');
+    const heightMenu = document.querySelector('#heightMenu');
     const confirmationModal = document.querySelector('#confirmationModal');
     const closeConfirmation = document.querySelector('#closeConfirmation');
     const doneConfirmation = document.querySelector('#doneConfirmation');
@@ -645,11 +728,29 @@
         const feet = Math.floor(totalInches / 12);
         const inches = totalInches % 12;
         const value = `${feet}'${inches}"`;
-        const option = document.createElement('option');
-        option.value = value;
+        const item = document.createElement('li');
+        const option = document.createElement('button');
+        option.type = 'button';
         option.textContent = value;
-        height.append(option);
+        option.setAttribute('role', 'option');
+        option.addEventListener('click', () => {
+          height.value = value;
+          heightLabel.textContent = value;
+          closeHeightMenu();
+        });
+        item.append(option);
+        heightMenu.append(item);
       }
+    }
+
+    function openHeightMenu() {
+      heightSelect.classList.add('open');
+      heightToggle.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeHeightMenu() {
+      heightSelect.classList.remove('open');
+      heightToggle.setAttribute('aria-expanded', 'false');
     }
 
     function showNotice(message, isError = false) {
@@ -683,6 +784,9 @@
 
     function resetRegistrationForm() {
       form.reset();
+      height.value = '';
+      heightLabel.textContent = 'Select height';
+      closeHeightMenu();
       formMode.textContent = '';
     }
 
@@ -799,6 +903,13 @@
 
     resetForm.addEventListener('click', resetRegistrationForm);
     downloadCsv.addEventListener('click', downloadRosterCsv);
+    heightToggle.addEventListener('click', () => {
+      if (heightSelect.classList.contains('open')) {
+        closeHeightMenu();
+      } else {
+        openHeightMenu();
+      }
+    });
     closeConfirmation.addEventListener('click', closeConfirmationModal);
     doneConfirmation.addEventListener('click', closeConfirmationModal);
     confirmationModal.addEventListener('click', (event) => {
@@ -809,6 +920,12 @@
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
         closeConfirmationModal();
+        closeHeightMenu();
+      }
+    });
+    document.addEventListener('click', (event) => {
+      if (!heightSelect.contains(event.target)) {
+        closeHeightMenu();
       }
     });
     populateHeightOptions();
