@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Velvet Masters League Player Registration</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070707;
+      --panel: #151515;
+      --panel-2: #202020;
+      --text: #f5efe3;
+      --muted: #b6ad9e;
+      --gold: #d9ad55;
+      --gold-2: #f0d890;
+      --line: #3b352c;
+      --danger: #d85d55;
+      --ok: #58b97d;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(217, 173, 85, 0.18), transparent 34rem),
+        linear-gradient(135deg, #030303 0%, #111 48%, #050505 100%);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 42px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(220px, 380px) 1fr;
+      gap: 28px;
+      align-items: center;
+      padding: 20px 0 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .logo-wrap {
+      display: grid;
+      place-items: center;
+    }
+
+    .logo {
+      width: min(100%, 380px);
+      height: auto;
+      filter: drop-shadow(0 24px 34px rgba(0, 0, 0, 0.7));
+    }
+
+    .hero h1 {
+      margin: 0;
+      max-width: 780px;
+      color: var(--gold-2);
+      font-size: clamp(2rem, 5vw, 4.8rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 1.04rem;
+      line-height: 1.55;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 370px;
+      gap: 24px;
+      align-items: start;
+      margin-top: 28px;
+    }
+
+    .section {
+      background: rgba(21, 21, 21, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-header h2,
+    .summary h2 {
+      margin: 0;
+      color: var(--gold-2);
+      font-size: 1.12rem;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      padding: 20px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: var(--gold-2);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid #4b4439;
+      border-radius: 6px;
+      background: #0f0f0f;
+      color: var(--text);
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(217, 173, 85, 0.18);
+    }
+
+    .actions {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .btn {
+      min-height: 44px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 10px 15px;
+      color: #111;
+      background: linear-gradient(180deg, var(--gold-2), var(--gold));
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .btn.secondary {
+      color: var(--gold-2);
+      border-color: #5c513f;
+      background: #151515;
+    }
+
+    .btn.danger {
+      color: #fff;
+      border-color: #7a3431;
+      background: #7d2b27;
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.52;
+    }
+
+    .summary {
+      padding: 20px;
+      position: sticky;
+      top: 18px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .stat {
+      min-height: 92px;
+      display: grid;
+      align-content: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      padding: 14px;
+    }
+
+    .stat strong {
+      color: var(--gold-2);
+      font-size: 1.85rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .hint {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.94rem;
+    }
+
+    .admin-field {
+      margin-top: 18px;
+    }
+
+    .admin-actions {
+      margin-top: 14px;
+    }
+
+    .table-section {
+      margin-top: 24px;
+      overflow: hidden;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 0.92rem;
+    }
+
+    th {
+      color: var(--gold-2);
+      background: #101010;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+
+    td {
+      color: #eee6d6;
+    }
+
+    .empty {
+      padding: 34px 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tiny {
+      min-height: 34px;
+      padding: 7px 10px;
+      font-size: 0.76rem;
+    }
+
+    .notice {
+      margin-left: auto;
+      color: var(--ok);
+      font-size: 0.9rem;
+      min-height: 1.2em;
+    }
+
+    @media (max-width: 880px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        text-align: center;
+      }
+
+      .hero p {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .summary {
+        position: static;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 22px, 1180px);
+        padding-top: 14px;
+      }
+
+      .form {
+        grid-template-columns: 1fr;
+        padding: 16px;
+      }
+
+      .section-header,
+      .actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .notice {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="logo-wrap">
+        <img class="logo" src="assets/eaba.jpg" alt="Velvet Masters League logo">
+      </div>
+      <div>
+        <h1>Player Registration</h1>
+        <p>Register Velvet Masters League players directly into the official online database. Admins can download the roster as a CSV file using the export password.</p>
+      </div>
+    </header>
+
+    <div class="layout">
+      <section class="section" aria-labelledby="form-title">
+        <div class="section-header">
+          <h2 id="form-title">Registration Form</h2>
+          <span class="notice" id="notice" aria-live="polite"></span>
+        </div>
+
+        <form class="form" id="registrationForm">
+          <div class="field">
+            <label for="firstName">First Name</label>
+            <input id="firstName" name="firstName" autocomplete="given-name" required>
+          </div>
+
+          <div class="field">
+            <label for="lastName">Last Name</label>
+            <input id="lastName" name="lastName" autocomplete="family-name" required>
+          </div>
+
+          <div class="field">
+            <label for="birthDate">Birth Date</label>
+            <input id="birthDate" name="birthDate" type="date" required>
+          </div>
+
+          <div class="field">
+            <label for="age">Age</label>
+            <input id="age" name="age" type="number" min="40" max="90" placeholder="40+" required>
+          </div>
+
+          <div class="field">
+            <label for="contactNumber">Contact Number</label>
+            <input id="contactNumber" name="contactNumber" inputmode="tel" autocomplete="tel" required>
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email">
+          </div>
+
+          <div class="field">
+            <label for="teamName">Team Name</label>
+            <input id="teamName" name="teamName" required>
+          </div>
+
+          <div class="field">
+            <label for="jerseyNumber">Jersey Number</label>
+            <input id="jerseyNumber" name="jerseyNumber" type="number" min="0" max="99" required>
+          </div>
+
+          <div class="field">
+            <label for="position">Position</label>
+            <select id="position" name="position" required>
+              <option value="">Select position</option>
+              <option>Point Guard</option>
+              <option>Shooting Guard</option>
+              <option>Small Forward</option>
+              <option>Power Forward</option>
+              <option>Center</option>
+              <option>Utility</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="height">Height</label>
+            <input id="height" name="height" placeholder="Example: 5'10&quot;">
+          </div>
+
+          <div class="field">
+            <label for="weight">Weight</label>
+            <input id="weight" name="weight" placeholder="Example: 78 kg">
+          </div>
+
+          <div class="field">
+            <label for="emergencyContact">Emergency Contact</label>
+            <input id="emergencyContact" name="emergencyContact" required>
+          </div>
+
+          <div class="field full">
+            <label for="address">Address</label>
+            <textarea id="address" name="address" required></textarea>
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Save Player</button>
+            <button class="btn secondary" type="button" id="resetForm">Clear Form</button>
+            <span class="notice" id="formMode"></span>
+          </div>
+        </form>
+      </section>
+
+      <aside class="section summary" aria-labelledby="summary-title">
+        <h2 id="summary-title">Admin Export</h2>
+        <p class="hint">Registration data is saved in the deployed database. Enter the admin password to download all player records as a CSV file.</p>
+        <div class="field admin-field">
+          <label for="adminPassword">Admin Password</label>
+          <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter password">
+        </div>
+        <div class="actions admin-actions">
+          <button class="btn" type="button" id="downloadCsv">Download CSV</button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const fields = [
+      'firstName',
+      'lastName',
+      'birthDate',
+      'age',
+      'contactNumber',
+      'email',
+      'teamName',
+      'jerseyNumber',
+      'position',
+      'height',
+      'weight',
+      'emergencyContact',
+      'address'
+    ];
+
+    const form = document.querySelector('#registrationForm');
+    const notice = document.querySelector('#notice');
+    const formMode = document.querySelector('#formMode');
+    const downloadCsv = document.querySelector('#downloadCsv');
+    const adminPassword = document.querySelector('#adminPassword');
+    const resetForm = document.querySelector('#resetForm');
+    const birthDate = document.querySelector('#birthDate');
+    const age = document.querySelector('#age');
+
+    function showNotice(message) {
+      notice.textContent = message;
+      window.clearTimeout(showNotice.timer);
+      showNotice.timer = window.setTimeout(() => {
+        notice.textContent = '';
+      }, 2600);
+    }
+
+    function calculateAge(value) {
+      if (!value) return '';
+      const born = new Date(`${value}T00:00:00`);
+      const today = new Date();
+      let years = today.getFullYear() - born.getFullYear();
+      const monthDiff = today.getMonth() - born.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < born.getDate())) {
+        years -= 1;
+      }
+      return Number.isFinite(years) ? years : '';
+    }
+
+    function playerFromForm() {
+      const data = new FormData(form);
+      return fields.reduce((player, field) => {
+        player[field] = String(data.get(field) || '').trim();
+        return player;
+      }, {});
+    }
+
+    function resetRegistrationForm() {
+      form.reset();
+      formMode.textContent = '';
+    }
+
+    async function parseJsonError(response) {
+      try {
+        const data = await response.json();
+        return data.error || 'Request failed.';
+      } catch {
+        return 'Request failed.';
+      }
+    }
+
+    async function downloadRosterCsv() {
+      const password = adminPassword.value;
+      if (!password) {
+        showNotice('Enter the admin password.');
+        adminPassword.focus();
+        return;
+      }
+
+      downloadCsv.disabled = true;
+      downloadCsv.textContent = 'Downloading...';
+      let response;
+      try {
+        response = await fetch('/api/export', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+      } catch {
+        showNotice('Could not connect to the server.');
+        downloadCsv.disabled = false;
+        downloadCsv.textContent = 'Download CSV';
+        return;
+      }
+
+      if (!response.ok) {
+        showNotice(await parseJsonError(response));
+        downloadCsv.disabled = false;
+        downloadCsv.textContent = 'Download CSV';
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const date = new Date().toISOString().slice(0, 10);
+      link.href = url;
+      link.download = `velvet-masters-registration-${date}.csv`;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showNotice('CSV downloaded.');
+      downloadCsv.disabled = false;
+      downloadCsv.textContent = 'Download CSV';
+    }
+
+    birthDate.addEventListener('change', () => {
+      const value = calculateAge(birthDate.value);
+      if (value) age.value = value;
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const player = playerFromForm();
+      const submitButton = form.querySelector('button[type="submit"]');
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Saving...';
+      formMode.textContent = '';
+
+      let response;
+      try {
+        response = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(player)
+        });
+      } catch {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Save Player';
+        showNotice('Could not connect to the server.');
+        return;
+      }
+
+      submitButton.disabled = false;
+      submitButton.textContent = 'Save Player';
+
+      if (!response.ok) {
+        showNotice(await parseJsonError(response));
+        return;
+      }
+
+      resetRegistrationForm();
+      showNotice('Player registered.');
+    });
+
+    resetForm.addEventListener('click', resetRegistrationForm);
+    downloadCsv.addEventListener('click', downloadRosterCsv);
+  </script>
+</body>
+</html>
