@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Velvet Masters League Player Registration</title>
+  <link rel="icon" href="assets/eaba.jpg">
   <style>
     :root {
       color-scheme: dark;
@@ -498,12 +499,13 @@
     const birthDate = document.querySelector('#birthDate');
     const age = document.querySelector('#age');
 
-    function showNotice(message) {
+    function showNotice(message, isError = false) {
       notice.textContent = message;
+      notice.style.color = isError ? 'var(--danger)' : 'var(--ok)';
       window.clearTimeout(showNotice.timer);
       showNotice.timer = window.setTimeout(() => {
         notice.textContent = '';
-      }, 2600);
+      }, isError ? 8000 : 2600);
     }
 
     function calculateAge(value) {
@@ -543,7 +545,7 @@
     async function downloadRosterCsv() {
       const password = adminPassword.value;
       if (!password) {
-        showNotice('Enter the admin password.');
+        showNotice('Enter the admin password.', true);
         adminPassword.focus();
         return;
       }
@@ -558,14 +560,14 @@
           body: JSON.stringify({ password })
         });
       } catch {
-        showNotice('Could not connect to the server.');
+        showNotice('Could not connect to the server.', true);
         downloadCsv.disabled = false;
         downloadCsv.textContent = 'Download CSV';
         return;
       }
 
       if (!response.ok) {
-        showNotice(await parseJsonError(response));
+        showNotice(await parseJsonError(response), true);
         downloadCsv.disabled = false;
         downloadCsv.textContent = 'Download CSV';
         return;
@@ -610,7 +612,7 @@
       } catch {
         submitButton.disabled = false;
         submitButton.textContent = 'Save Player';
-        showNotice('Could not connect to the server.');
+        showNotice('Could not connect to the server.', true);
         return;
       }
 
@@ -618,7 +620,7 @@
       submitButton.textContent = 'Save Player';
 
       if (!response.ok) {
-        showNotice(await parseJsonError(response));
+        showNotice(await parseJsonError(response), true);
         return;
       }
 

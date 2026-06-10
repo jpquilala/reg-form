@@ -1,4 +1,4 @@
-const { csvCell, getSupabase } = require('./_db');
+const { csvCell, getSupabase, parseBody, publicError } = require('./_db');
 
 const adminPassword = process.env.ADMIN_PASSWORD || 'iamanadmin.*';
 
@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : req.body || {};
+  const body = parseBody(req);
 
   if (body.password !== adminPassword) {
     return res.status(401).json({ error: 'Invalid admin password.' });
@@ -52,7 +52,8 @@ module.exports = async function handler(req, res) {
     res.setHeader('Content-Disposition', `attachment; filename="velvet-masters-registration-${date}.csv"`);
     return res.status(200).send(csv);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'CSV could not be generated.' });
+    console.error('CSV export failed:', error);
+    const response = publicError(error, 'CSV could not be generated. Check Vercel function logs for details.');
+    return res.status(response.status).json({ error: response.message });
   }
 };

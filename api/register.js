@@ -1,4 +1,4 @@
-const { cleanString, getSupabase, requireFields } = require('./_db');
+const { cleanString, getSupabase, parseBody, publicError, requireFields } = require('./_db');
 
 const requiredFields = [
   'firstName',
@@ -20,7 +20,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : req.body || {};
+    const body = parseBody(req);
     const validationError = requireFields(body, requiredFields);
     const age = Number(body.age);
 
@@ -55,7 +55,8 @@ module.exports = async function handler(req, res) {
 
     return res.status(201).json({ ok: true });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Registration could not be saved.' });
+    console.error('Registration save failed:', error);
+    const response = publicError(error, 'Registration could not be saved. Check Vercel function logs for details.');
+    return res.status(response.status).json({ error: response.message });
   }
 };
