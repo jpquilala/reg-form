@@ -315,6 +315,90 @@
       min-height: 1.2em;
     }
 
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(0, 0, 0, 0.72);
+    }
+
+    .modal.open {
+      display: grid;
+    }
+
+    .modal-panel {
+      width: min(100%, 460px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #151515;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.55);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: var(--gold-2);
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+
+    .modal-close {
+      width: 36px;
+      min-height: 36px;
+      padding: 0;
+      color: var(--gold-2);
+      border-color: #5c513f;
+      background: #101010;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .registered-details {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 18px;
+    }
+
+    .registered-details div {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(240, 216, 144, 0.12);
+    }
+
+    .registered-details dt {
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .registered-details dd {
+      margin: 0;
+      color: var(--text);
+      overflow-wrap: anywhere;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 18px 18px;
+    }
+
     @media (max-width: 880px) {
       .hero,
       .layout {
@@ -354,6 +438,11 @@
 
       .notice {
         margin-left: 0;
+      }
+
+      .registered-details div {
+        grid-template-columns: 1fr;
+        gap: 4px;
       }
     }
   </style>
@@ -475,6 +564,44 @@
     </div>
   </main>
 
+  <div class="modal" id="confirmationModal" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="confirmationTitle">Player Registered</h2>
+        <button class="btn secondary modal-close" type="button" id="closeConfirmation" aria-label="Close confirmation">&times;</button>
+      </div>
+      <dl class="registered-details">
+        <div>
+          <dt>Full Name</dt>
+          <dd id="confirmFullName"></dd>
+        </div>
+        <div>
+          <dt>Age</dt>
+          <dd id="confirmAge"></dd>
+        </div>
+        <div>
+          <dt>Birthday</dt>
+          <dd id="confirmBirthday"></dd>
+        </div>
+        <div>
+          <dt>Team Name</dt>
+          <dd id="confirmTeamName"></dd>
+        </div>
+        <div>
+          <dt>Position</dt>
+          <dd id="confirmPosition"></dd>
+        </div>
+        <div>
+          <dt>Contact No.</dt>
+          <dd id="confirmContactNumber"></dd>
+        </div>
+      </dl>
+      <div class="modal-footer">
+        <button class="btn" type="button" id="doneConfirmation">Done</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const fields = [
       'firstName',
@@ -501,6 +628,17 @@
     const birthDate = document.querySelector('#birthDate');
     const age = document.querySelector('#age');
     const height = document.querySelector('#height');
+    const confirmationModal = document.querySelector('#confirmationModal');
+    const closeConfirmation = document.querySelector('#closeConfirmation');
+    const doneConfirmation = document.querySelector('#doneConfirmation');
+    const confirmationFields = {
+      fullName: document.querySelector('#confirmFullName'),
+      age: document.querySelector('#confirmAge'),
+      birthday: document.querySelector('#confirmBirthday'),
+      teamName: document.querySelector('#confirmTeamName'),
+      position: document.querySelector('#confirmPosition'),
+      contactNumber: document.querySelector('#confirmContactNumber')
+    };
 
     function populateHeightOptions() {
       for (let totalInches = 48; totalInches <= 84; totalInches += 1) {
@@ -546,6 +684,21 @@
     function resetRegistrationForm() {
       form.reset();
       formMode.textContent = '';
+    }
+
+    function showConfirmation(player) {
+      confirmationFields.fullName.textContent = `${player.firstName} ${player.lastName}`.trim();
+      confirmationFields.age.textContent = player.age;
+      confirmationFields.birthday.textContent = player.birthDate;
+      confirmationFields.teamName.textContent = player.teamName;
+      confirmationFields.position.textContent = player.position;
+      confirmationFields.contactNumber.textContent = player.contactNumber;
+      confirmationModal.classList.add('open');
+      doneConfirmation.focus();
+    }
+
+    function closeConfirmationModal() {
+      confirmationModal.classList.remove('open');
     }
 
     async function parseJsonError(response) {
@@ -641,10 +794,23 @@
 
       resetRegistrationForm();
       showNotice('Player registered.');
+      showConfirmation(player);
     });
 
     resetForm.addEventListener('click', resetRegistrationForm);
     downloadCsv.addEventListener('click', downloadRosterCsv);
+    closeConfirmation.addEventListener('click', closeConfirmationModal);
+    doneConfirmation.addEventListener('click', closeConfirmationModal);
+    confirmationModal.addEventListener('click', (event) => {
+      if (event.target === confirmationModal) {
+        closeConfirmationModal();
+      }
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeConfirmationModal();
+      }
+    });
     populateHeightOptions();
   </script>
 </body>
