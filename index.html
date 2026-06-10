@@ -522,7 +522,7 @@
 
           <div class="field">
             <label for="height">Height</label>
-            <select id="height" name="height" size="5">
+            <select id="height" name="height" size="1">
               <option value="">Select height</option>
             </select>
           </div>
@@ -650,6 +650,14 @@
         option.textContent = value;
         height.append(option);
       }
+    }
+
+    function expandHeightDropdown() {
+      height.size = 5;
+    }
+
+    function collapseHeightDropdown() {
+      height.size = 1;
     }
 
     function showNotice(message, isError = false) {
@@ -799,6 +807,10 @@
 
     resetForm.addEventListener('click', resetRegistrationForm);
     downloadCsv.addEventListener('click', downloadRosterCsv);
+    height.addEventListener('focus', expandHeightDropdown);
+    height.addEventListener('mousedown', expandHeightDropdown);
+    height.addEventListener('change', collapseHeightDropdown);
+    height.addEventListener('blur', collapseHeightDropdown);
     closeConfirmation.addEventListener('click', closeConfirmationModal);
     doneConfirmation.addEventListener('click', closeConfirmationModal);
     confirmationModal.addEventListener('click', (event) => {
