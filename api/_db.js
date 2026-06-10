@@ -1,25 +1,19 @@
-const { sql } = require('@vercel/postgres');
+const { createClient } = require('@supabase/supabase-js');
 
-async function ensurePlayersTable() {
-  await sql`
-    CREATE TABLE IF NOT EXISTS players (
-      id SERIAL PRIMARY KEY,
-      registered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      first_name TEXT NOT NULL,
-      last_name TEXT NOT NULL,
-      birth_date DATE NOT NULL,
-      age INTEGER NOT NULL,
-      contact_number TEXT NOT NULL,
-      email TEXT,
-      team_name TEXT NOT NULL,
-      jersey_number TEXT NOT NULL,
-      player_position TEXT NOT NULL,
-      height TEXT,
-      weight TEXT,
-      emergency_contact TEXT NOT NULL,
-      address TEXT NOT NULL
-    )
-  `;
+function getSupabase() {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.');
+  }
+
+  return createClient(supabaseUrl, serviceRoleKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false
+    }
+  });
 }
 
 function cleanString(value) {
@@ -42,7 +36,6 @@ function csvCell(value) {
 module.exports = {
   cleanString,
   csvCell,
-  ensurePlayersTable,
-  requireFields,
-  sql
+  getSupabase,
+  requireFields
 };

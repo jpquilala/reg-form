@@ -1,21 +1,30 @@
 # Velvet Masters League Player Registration
 
-Static registration page plus Vercel serverless API routes for saving player records to Postgres and exporting the roster as CSV.
+Static registration page plus Vercel serverless API routes for saving player records to Supabase and exporting the roster as CSV.
+
+## Supabase Setup
+
+1. Create a Supabase project.
+2. Open the Supabase SQL Editor.
+3. Run the SQL in `supabase-schema.sql`.
+4. Copy these values from Project Settings > API:
+   - Project URL
+   - `service_role` key
+
+Keep the service-role key private. It is only used by Vercel serverless functions and is never exposed in the browser.
 
 ## Deploy to Vercel
 
-1. Push this folder to a Git repository.
-2. Import the repository in Vercel.
-3. Add a Vercel Postgres database to the project, or provide a compatible `POSTGRES_URL` environment variable.
-4. Add this environment variable:
+1. Import this GitHub repository in Vercel.
+2. Add these Vercel environment variables:
 
 ```env
 ADMIN_PASSWORD=iamanadmin.*
+SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=YOUR_SUPABASE_SERVICE_ROLE_KEY
 ```
 
-5. Deploy.
-
-The database table is created automatically the first time a registration or export request runs.
+3. Deploy.
 
 ## Local Development
 

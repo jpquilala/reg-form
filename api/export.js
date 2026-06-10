@@ -1,4 +1,4 @@
-const { csvCell, ensurePlayersTable, sql } = require('./_db');
+const { csvCell, getSupabase } = require('./_db');
 
 const adminPassword = process.env.ADMIN_PASSWORD || 'iamanadmin.*';
 
@@ -32,32 +32,19 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    await ensurePlayersTable();
-    const { rows } = await sql`
-      SELECT
-        registered_at,
-        first_name,
-        last_name,
-        birth_date,
-        age,
-        contact_number,
-        email,
-        team_name,
-        jersey_number,
-        player_position,
-        height,
-        weight,
-        emergency_contact,
-        address
-      FROM players
-      ORDER BY registered_at DESC, id DESC
-    `;
+    const supabase = getSupabase();
+    const { data: rows, error } = await supabase
+      .from('players')
+      .select(columns.map(([key]) => key).join(','))
+      .order('registered_at', { ascending: false })
+      .order('id', { ascending: false });
+
+    if (error) {
+      throw error;
+    }
 
     const header = columns.map(([, label]) => csvCell(label)).join(',');
-    const lines = rows.map((row) => columns.map(([key]) => {
-      const value = row[key] instanceof Date ? row[key].toISOString() : row[key];
-      return csvCell(value);
-    }).join(','));
+    const lines = (rows || []).map((row) => columns.map(([key]) => csvCell(row[key])).join(','));
     const csv = [header, ...lines].join('\r\n');
     const date = new Date().toISOString().slice(0, 10);
 

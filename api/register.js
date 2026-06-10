@@ -1,4 +1,4 @@
-const { cleanString, ensurePlayersTable, requireFields, sql } = require('./_db');
+const { cleanString, getSupabase, requireFields } = require('./_db');
 
 const requiredFields = [
   'firstName',
@@ -32,39 +32,26 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Age must be between 40 and 90.' });
     }
 
-    await ensurePlayersTable();
-    await sql`
-      INSERT INTO players (
-        first_name,
-        last_name,
-        birth_date,
-        age,
-        contact_number,
-        email,
-        team_name,
-        jersey_number,
-        player_position,
-        height,
-        weight,
-        emergency_contact,
-        address
-      )
-      VALUES (
-        ${cleanString(body.firstName)},
-        ${cleanString(body.lastName)},
-        ${cleanString(body.birthDate)},
-        ${age},
-        ${cleanString(body.contactNumber)},
-        ${cleanString(body.email)},
-        ${cleanString(body.teamName)},
-        ${cleanString(body.jerseyNumber)},
-        ${cleanString(body.position)},
-        ${cleanString(body.height)},
-        ${cleanString(body.weight)},
-        ${cleanString(body.emergencyContact)},
-        ${cleanString(body.address)}
-      )
-    `;
+    const supabase = getSupabase();
+    const { error } = await supabase.from('players').insert({
+      first_name: cleanString(body.firstName),
+      last_name: cleanString(body.lastName),
+      birth_date: cleanString(body.birthDate),
+      age,
+      contact_number: cleanString(body.contactNumber),
+      email: cleanString(body.email),
+      team_name: cleanString(body.teamName),
+      jersey_number: cleanString(body.jerseyNumber),
+      player_position: cleanString(body.position),
+      height: cleanString(body.height),
+      weight: cleanString(body.weight),
+      emergency_contact: cleanString(body.emergencyContact),
+      address: cleanString(body.address)
+    });
+
+    if (error) {
+      throw error;
+    }
 
     return res.status(201).json({ ok: true });
   } catch (error) {
