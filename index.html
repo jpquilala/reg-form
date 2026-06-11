@@ -293,6 +293,16 @@
       resize: vertical;
     }
 
+    input[type="date"] {
+      direction: ltr;
+      text-align: left;
+      text-align-last: left;
+    }
+
+    input[type="date"]::-webkit-date-and-time-value {
+      text-align: left;
+    }
+
     input:focus,
     select:focus,
     textarea:focus {
