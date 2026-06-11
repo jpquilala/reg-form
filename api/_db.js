@@ -60,6 +60,13 @@ function publicError(error, fallbackMessage) {
     };
   }
 
+  if (error && (error.code === '42703' || error.code === 'PGRST204')) {
+    return {
+      status: 503,
+      message: 'Supabase players table is missing one or more columns. Run the latest supabase-schema.sql in the Supabase SQL Editor, then retry.'
+    };
+  }
+
   if (error && (error.status === 401 || /invalid api key|jwt|permission/i.test(error.message || ''))) {
     return {
       status: 503,

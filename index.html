@@ -87,7 +87,7 @@
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 370px;
+      grid-template-columns: minmax(0, 1fr);
       gap: 24px;
       align-items: start;
       margin-top: 28px;
@@ -132,6 +132,28 @@
 
     .field.full {
       grid-column: 1 / -1;
+    }
+
+    .form-group {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      padding-top: 4px;
+    }
+
+    .form-group + .form-group {
+      margin-top: 8px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .form-group-title {
+      grid-column: 1 / -1;
+      margin: 0;
+      color: var(--gold-2);
+      font-size: 0.94rem;
+      text-transform: uppercase;
     }
 
     label {
@@ -323,14 +345,6 @@
       font-size: 0.94rem;
     }
 
-    .admin-field {
-      margin-top: 18px;
-    }
-
-    .admin-actions {
-      margin-top: 14px;
-    }
-
     .table-section {
       margin-top: 24px;
       overflow: hidden;
@@ -505,6 +519,10 @@
         padding: 16px;
       }
 
+      .form-group {
+        grid-template-columns: 1fr;
+      }
+
       .section-header,
       .actions {
         align-items: stretch;
@@ -542,81 +560,117 @@
         </div>
 
         <form class="form" id="registrationForm">
-          <div class="field">
-            <label for="firstName">First Name</label>
-            <input id="firstName" name="firstName" autocomplete="given-name" required>
-          </div>
+          <div class="form-group">
+            <h3 class="form-group-title">Player Details</h3>
+            <div class="field">
+              <label for="firstName">First Name</label>
+              <input id="firstName" name="firstName" autocomplete="given-name" required>
+            </div>
 
-          <div class="field">
-            <label for="lastName">Last Name</label>
-            <input id="lastName" name="lastName" autocomplete="family-name" required>
-          </div>
+            <div class="field">
+              <label for="lastName">Last Name</label>
+              <input id="lastName" name="lastName" autocomplete="family-name" required>
+            </div>
 
-          <div class="field">
-            <label for="birthDate">Birth Date</label>
-            <input id="birthDate" name="birthDate" type="date" required>
-          </div>
+            <div class="field">
+              <label for="birthDate">Birth Date</label>
+              <input id="birthDate" name="birthDate" type="date" required>
+            </div>
 
-          <div class="field">
-            <label for="age">Age</label>
-            <input id="age" name="age" type="number" min="30" max="90" placeholder="30+" required>
-          </div>
+            <div class="field">
+              <label for="age">Age</label>
+              <input id="age" name="age" type="number" min="30" max="90" placeholder="30+" required>
+            </div>
 
-          <div class="field">
-            <label for="contactNumber">Contact Number</label>
-            <input id="contactNumber" name="contactNumber" inputmode="tel" autocomplete="tel" required>
-          </div>
+            <div class="field">
+              <label for="height">Height</label>
+              <div class="custom-select" id="heightSelect">
+                <input id="height" name="height" type="hidden">
+                <button class="custom-select-toggle" type="button" id="heightToggle" aria-haspopup="listbox" aria-expanded="false">
+                  <span id="heightLabel">Select height</span>
+                </button>
+                <ul class="custom-select-menu" id="heightMenu" role="listbox" aria-label="Height"></ul>
+              </div>
+            </div>
 
-          <div class="field">
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" autocomplete="email">
-          </div>
-
-          <div class="field">
-            <label for="teamName">Team Name</label>
-            <input id="teamName" name="teamName" required>
-          </div>
-
-          <div class="field">
-            <label for="jerseyNumber">Jersey Number</label>
-            <input id="jerseyNumber" name="jerseyNumber" type="number" min="0" max="99" required>
-          </div>
-
-          <div class="field">
-            <label for="position">Position</label>
-            <div class="custom-select" id="positionSelect">
-              <input id="position" name="position" type="hidden" required>
-              <button class="custom-select-toggle" type="button" id="positionToggle" aria-haspopup="listbox" aria-expanded="false">
-                <span id="positionLabel">Select position</span>
-              </button>
-              <ul class="custom-select-menu" id="positionMenu" role="listbox" aria-label="Position"></ul>
+            <div class="field">
+              <label for="weight">Weight</label>
+              <input id="weight" name="weight" placeholder="Example: 78 kg">
             </div>
           </div>
 
-          <div class="field">
-            <label for="height">Height</label>
-            <div class="custom-select" id="heightSelect">
-              <input id="height" name="height" type="hidden">
-              <button class="custom-select-toggle" type="button" id="heightToggle" aria-haspopup="listbox" aria-expanded="false">
-                <span id="heightLabel">Select height</span>
-              </button>
-              <ul class="custom-select-menu" id="heightMenu" role="listbox" aria-label="Height"></ul>
+          <div class="form-group">
+            <h3 class="form-group-title">Team & Uniform</h3>
+            <div class="field">
+              <label for="teamName">Team Name</label>
+              <input id="teamName" name="teamName" required>
+            </div>
+
+            <div class="field">
+              <label for="jerseyNumber">Jersey Number</label>
+              <input id="jerseyNumber" name="jerseyNumber" type="number" min="0" max="99" required>
+            </div>
+
+            <div class="field">
+              <label for="position">Position</label>
+              <div class="custom-select" id="positionSelect">
+                <input id="position" name="position" type="hidden" required>
+                <button class="custom-select-toggle" type="button" id="positionToggle" aria-haspopup="listbox" aria-expanded="false">
+                  <span id="positionLabel">Select position</span>
+                </button>
+                <ul class="custom-select-menu" id="positionMenu" role="listbox" aria-label="Position"></ul>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="jerseySize">Jersey Size</label>
+              <div class="custom-select" id="jerseySizeSelect">
+                <input id="jerseySize" name="jerseySize" type="hidden">
+                <button class="custom-select-toggle" type="button" id="jerseySizeToggle" aria-haspopup="listbox" aria-expanded="false">
+                  <span id="jerseySizeLabel">Select jersey size</span>
+                </button>
+                <ul class="custom-select-menu" id="jerseySizeMenu" role="listbox" aria-label="Jersey Size"></ul>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="shortSize">Short Size</label>
+              <div class="custom-select" id="shortSizeSelect">
+                <input id="shortSize" name="shortSize" type="hidden">
+                <button class="custom-select-toggle" type="button" id="shortSizeToggle" aria-haspopup="listbox" aria-expanded="false">
+                  <span id="shortSizeLabel">Select short size</span>
+                </button>
+                <ul class="custom-select-menu" id="shortSizeMenu" role="listbox" aria-label="Short Size"></ul>
+              </div>
             </div>
           </div>
 
-          <div class="field">
-            <label for="weight">Weight</label>
-            <input id="weight" name="weight" placeholder="Example: 78 kg">
-          </div>
+          <div class="form-group">
+            <h3 class="form-group-title">Contact & Background</h3>
+            <div class="field">
+              <label for="contactNumber">Contact Number</label>
+              <input id="contactNumber" name="contactNumber" inputmode="tel" autocomplete="tel" required>
+            </div>
 
-          <div class="field">
-            <label for="emergencyContact">Emergency Contact</label>
-            <input id="emergencyContact" name="emergencyContact" required>
-          </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email">
+            </div>
 
-          <div class="field full">
-            <label for="address">Address</label>
-            <textarea id="address" name="address" required></textarea>
+            <div class="field">
+              <label for="workBusiness">Work/Business</label>
+              <input id="workBusiness" name="workBusiness">
+            </div>
+
+            <div class="field">
+              <label for="emergencyContact">Emergency Contact</label>
+              <input id="emergencyContact" name="emergencyContact" required>
+            </div>
+
+            <div class="field full">
+              <label for="address">Address</label>
+              <textarea id="address" name="address" required></textarea>
+            </div>
           </div>
 
           <div class="actions">
@@ -627,17 +681,6 @@
         </form>
       </section>
 
-      <aside class="section summary" aria-labelledby="summary-title">
-        <h2 id="summary-title">Admin Export</h2>
-        <p class="hint">Registration data is saved in the deployed database. Enter the admin password to download all player records as a CSV file.</p>
-        <div class="field admin-field">
-          <label for="adminPassword">Admin Password</label>
-          <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter password">
-        </div>
-        <div class="actions admin-actions">
-          <button class="btn" type="button" id="downloadCsv">Download CSV</button>
-        </div>
-      </aside>
     </div>
   </main>
 
@@ -692,6 +735,9 @@
       'position',
       'height',
       'weight',
+      'jerseySize',
+      'shortSize',
+      'workBusiness',
       'emergencyContact',
       'address'
     ];
@@ -699,8 +745,6 @@
     const form = document.querySelector('#registrationForm');
     const notice = document.querySelector('#notice');
     const formMode = document.querySelector('#formMode');
-    const downloadCsv = document.querySelector('#downloadCsv');
-    const adminPassword = document.querySelector('#adminPassword');
     const resetForm = document.querySelector('#resetForm');
     const birthDate = document.querySelector('#birthDate');
     const age = document.querySelector('#age');
@@ -714,6 +758,16 @@
     const heightToggle = document.querySelector('#heightToggle');
     const heightLabel = document.querySelector('#heightLabel');
     const heightMenu = document.querySelector('#heightMenu');
+    const jerseySize = document.querySelector('#jerseySize');
+    const jerseySizeSelect = document.querySelector('#jerseySizeSelect');
+    const jerseySizeToggle = document.querySelector('#jerseySizeToggle');
+    const jerseySizeLabel = document.querySelector('#jerseySizeLabel');
+    const jerseySizeMenu = document.querySelector('#jerseySizeMenu');
+    const shortSize = document.querySelector('#shortSize');
+    const shortSizeSelect = document.querySelector('#shortSizeSelect');
+    const shortSizeToggle = document.querySelector('#shortSizeToggle');
+    const shortSizeLabel = document.querySelector('#shortSizeLabel');
+    const shortSizeMenu = document.querySelector('#shortSizeMenu');
     const confirmationModal = document.querySelector('#confirmationModal');
     const closeConfirmation = document.querySelector('#closeConfirmation');
     const doneConfirmation = document.querySelector('#doneConfirmation');
@@ -732,6 +786,7 @@
       'Power Forward',
       'Center'
     ];
+    const sizeOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
     function createCustomSelect(config) {
       const {
@@ -820,6 +875,24 @@
         placeholder: 'Select height',
         root: heightSelect,
         toggle: heightToggle
+      },
+      {
+        input: jerseySize,
+        label: jerseySizeLabel,
+        menu: jerseySizeMenu,
+        options: sizeOptions,
+        placeholder: 'Select jersey size',
+        root: jerseySizeSelect,
+        toggle: jerseySizeToggle
+      },
+      {
+        input: shortSize,
+        label: shortSizeLabel,
+        menu: shortSizeMenu,
+        options: sizeOptions,
+        placeholder: 'Select short size',
+        root: shortSizeSelect,
+        toggle: shortSizeToggle
       }
     ];
 
@@ -882,52 +955,6 @@
       }
     }
 
-    async function downloadRosterCsv() {
-      const password = adminPassword.value;
-      if (!password) {
-        showNotice('Enter the admin password.', true);
-        adminPassword.focus();
-        return;
-      }
-
-      downloadCsv.disabled = true;
-      downloadCsv.textContent = 'Downloading...';
-      let response;
-      try {
-        response = await fetch('/api/export', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password })
-        });
-      } catch {
-        showNotice('Could not connect to the server.', true);
-        downloadCsv.disabled = false;
-        downloadCsv.textContent = 'Download CSV';
-        return;
-      }
-
-      if (!response.ok) {
-        showNotice(await parseJsonError(response), true);
-        downloadCsv.disabled = false;
-        downloadCsv.textContent = 'Download CSV';
-        return;
-      }
-
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      const date = new Date().toISOString().slice(0, 10);
-      link.href = url;
-      link.download = `velvet-masters-registration-${date}.csv`;
-      document.body.append(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-      showNotice('CSV downloaded.');
-      downloadCsv.disabled = false;
-      downloadCsv.textContent = 'Download CSV';
-    }
-
     birthDate.addEventListener('change', () => {
       const value = calculateAge(birthDate.value);
       if (value) age.value = value;
@@ -976,7 +1003,6 @@
     });
 
     resetForm.addEventListener('click', resetRegistrationForm);
-    downloadCsv.addEventListener('click', downloadRosterCsv);
     closeConfirmation.addEventListener('click', closeConfirmationModal);
     doneConfirmation.addEventListener('click', closeConfirmationModal);
     confirmationModal.addEventListener('click', (event) => {

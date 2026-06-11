@@ -1,6 +1,6 @@
 const { csvCell, getSupabase, parseBody, publicError } = require('./_db');
 
-const adminPassword = process.env.ADMIN_PASSWORD || 'iamanadmin.*';
+const adminPassword = 'notsoadmin.*';
 
 const columns = [
   ['registered_at', 'Registered At'],
@@ -15,6 +15,9 @@ const columns = [
   ['player_position', 'Position'],
   ['height', 'Height'],
   ['weight', 'Weight'],
+  ['jersey_size', 'Jersey Size'],
+  ['short_size', 'Short Size'],
+  ['work_business', 'Work/Business'],
   ['emergency_contact', 'Emergency Contact'],
   ['address', 'Address']
 ];

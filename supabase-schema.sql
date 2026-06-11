@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS public.players (
   player_position TEXT NOT NULL,
   height TEXT,
   weight TEXT,
+  jersey_size TEXT,
+  short_size TEXT,
+  work_business TEXT,
   emergency_contact TEXT NOT NULL,
   address TEXT NOT NULL
 );
@@ -24,6 +27,15 @@ DROP CONSTRAINT IF EXISTS players_age_check;
 
 ALTER TABLE public.players
 ADD CONSTRAINT players_age_check CHECK (age BETWEEN 30 AND 90);
+
+ALTER TABLE public.players
+ADD COLUMN IF NOT EXISTS jersey_size TEXT;
+
+ALTER TABLE public.players
+ADD COLUMN IF NOT EXISTS short_size TEXT;
+
+ALTER TABLE public.players
+ADD COLUMN IF NOT EXISTS work_business TEXT;
 
 ALTER TABLE public.players ENABLE ROW LEVEL SECURITY;
 

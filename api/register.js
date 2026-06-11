@@ -45,6 +45,9 @@ module.exports = async function handler(req, res) {
       player_position: cleanString(body.position),
       height: cleanString(body.height),
       weight: cleanString(body.weight),
+      jersey_size: cleanString(body.jerseySize),
+      short_size: cleanString(body.shortSize),
+      work_business: cleanString(body.workBusiness),
       emergency_contact: cleanString(body.emergencyContact),
       address: cleanString(body.address)
     });

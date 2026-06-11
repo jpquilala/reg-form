@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin - Player Registration</title>
+  <link rel="icon" href="assets/eaba.jpg">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070707;
+      --panel: #151515;
+      --panel-2: #202020;
+      --text: #f5efe3;
+      --muted: #b6ad9e;
+      --gold: #d9ad55;
+      --gold-2: #f0d890;
+      --line: #3b352c;
+      --danger: #d85d55;
+      --ok: #58b97d;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(217, 173, 85, 0.18), transparent 34rem),
+        linear-gradient(135deg, #030303 0%, #111 48%, #050505 100%);
+      color: var(--text);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 42px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(160px, 260px) 1fr;
+      gap: 28px;
+      align-items: center;
+      padding: 20px 0 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .logo {
+      width: min(100%, 260px);
+      height: auto;
+      filter: drop-shadow(0 24px 34px rgba(0, 0, 0, 0.7));
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--gold-2);
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .section {
+      margin-top: 28px;
+      background: rgba(21, 21, 21, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--gold-2);
+      font-size: 1.12rem;
+      text-transform: uppercase;
+    }
+
+    .login,
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: end;
+      padding: 20px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      min-width: min(100%, 320px);
+    }
+
+    label {
+      color: var(--gold-2);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    input {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid #4b4439;
+      border-radius: 6px;
+      background: #0f0f0f;
+      color: var(--text);
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(217, 173, 85, 0.18);
+    }
+
+    .btn {
+      min-height: 44px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 10px 15px;
+      color: #111;
+      background: linear-gradient(180deg, var(--gold-2), var(--gold));
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .btn.secondary {
+      color: var(--gold-2);
+      border-color: #5c513f;
+      background: #151515;
+    }
+
+    .notice {
+      color: var(--ok);
+      min-height: 1.2em;
+      padding: 0 20px 18px;
+      font-size: 0.92rem;
+    }
+
+    .admin-content {
+      display: none;
+    }
+
+    .admin-content.open {
+      display: block;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 0 20px 20px;
+    }
+
+    .stat {
+      min-width: 160px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      padding: 14px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--gold-2);
+      font-size: 1.85rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1300px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 0.9rem;
+    }
+
+    th {
+      color: var(--gold-2);
+      background: #101010;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+    }
+
+    td {
+      color: #eee6d6;
+    }
+
+    .empty {
+      padding: 34px 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 720px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .login,
+      .toolbar,
+      .section-header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <img class="logo" src="assets/eaba.jpg" alt="Elder Amateur Basketball Association 40+ 4th Conference logo">
+      </div>
+      <div>
+        <h1>Admin</h1>
+        <p>Review registered players and export the roster as a CSV file.</p>
+      </div>
+    </header>
+
+    <section class="section" id="loginSection">
+      <div class="section-header">
+        <h2>Admin Login</h2>
+      </div>
+      <div class="login">
+        <div class="field">
+          <label for="adminPassword">Password</label>
+          <input id="adminPassword" type="password" autocomplete="current-password">
+        </div>
+        <button class="btn" type="button" id="loginButton">Open Admin</button>
+      </div>
+      <div class="notice" id="notice" aria-live="polite"></div>
+    </section>
+
+    <section class="section admin-content" id="adminContent">
+      <div class="section-header">
+        <h2>Registered Players</h2>
+        <button class="btn secondary" type="button" id="refreshButton">Refresh</button>
+      </div>
+      <div class="toolbar">
+        <button class="btn" type="button" id="downloadCsv">Download CSV</button>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <strong id="totalPlayers">0</strong>
+          <span>Players</span>
+        </div>
+        <div class="stat">
+          <strong id="totalTeams">0</strong>
+          <span>Teams</span>
+        </div>
+      </div>
+      <div id="tableMount"></div>
+    </section>
+  </main>
+
+  <script>
+    const adminPagePassword = 'notsoadmin.*';
+    let activePassword = '';
+    let players = [];
+
+    const loginSection = document.querySelector('#loginSection');
+    const adminContent = document.querySelector('#adminContent');
+    const adminPassword = document.querySelector('#adminPassword');
+    const loginButton = document.querySelector('#loginButton');
+    const refreshButton = document.querySelector('#refreshButton');
+    const downloadCsv = document.querySelector('#downloadCsv');
+    const notice = document.querySelector('#notice');
+    const tableMount = document.querySelector('#tableMount');
+    const totalPlayers = document.querySelector('#totalPlayers');
+    const totalTeams = document.querySelector('#totalTeams');
+
+    function showNotice(message, isError = false) {
+      notice.textContent = message;
+      notice.style.color = isError ? 'var(--danger)' : 'var(--ok)';
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    async function parseJsonError(response) {
+      try {
+        const data = await response.json();
+        return data.error || 'Request failed.';
+      } catch {
+        return 'Request failed.';
+      }
+    }
+
+    function formatDate(value) {
+      if (!value) return '';
+      return String(value).slice(0, 10);
+    }
+
+    function renderTable() {
+      const teams = new Set(players.map((player) => String(player.team_name || '').toLowerCase()).filter(Boolean));
+      totalPlayers.textContent = players.length;
+      totalTeams.textContent = teams.size;
+
+      if (!players.length) {
+        tableMount.innerHTML = '<div class="empty">No players registered yet.</div>';
+        return;
+      }
+
+      const rows = players.map((player) => `
+        <tr>
+          <td>${escapeHtml(formatDate(player.registered_at))}</td>
+          <td>${escapeHtml(player.first_name)} ${escapeHtml(player.last_name)}</td>
+          <td>${escapeHtml(player.birth_date)}</td>
+          <td>${escapeHtml(player.age)}</td>
+          <td>${escapeHtml(player.team_name)}</td>
+          <td>${escapeHtml(player.jersey_number)}</td>
+          <td>${escapeHtml(player.player_position)}</td>
+          <td>${escapeHtml(player.height)}</td>
+          <td>${escapeHtml(player.weight)}</td>
+          <td>${escapeHtml(player.jersey_size)}</td>
+          <td>${escapeHtml(player.short_size)}</td>
+          <td>${escapeHtml(player.contact_number)}</td>
+          <td>${escapeHtml(player.email)}</td>
+          <td>${escapeHtml(player.work_business)}</td>
+          <td>${escapeHtml(player.emergency_contact)}</td>
+          <td>${escapeHtml(player.address)}</td>
+        </tr>
+      `).join('');
+
+      tableMount.innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Registered</th>
+                <th>Name</th>
+                <th>Birthday</th>
+                <th>Age</th>
+                <th>Team</th>
+                <th>No.</th>
+                <th>Position</th>
+                <th>Height</th>
+                <th>Weight</th>
+                <th>Jersey</th>
+                <th>Short</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th>Work/Business</th>
+                <th>Emergency</th>
+                <th>Address</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    async function loadPlayers() {
+      refreshButton.disabled = true;
+      refreshButton.textContent = 'Loading...';
+
+      let response;
+      try {
+        response = await fetch('/api/players', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: activePassword })
+        });
+      } catch {
+        showNotice('Could not connect to the server.', true);
+        refreshButton.disabled = false;
+        refreshButton.textContent = 'Refresh';
+        return;
+      }
+
+      refreshButton.disabled = false;
+      refreshButton.textContent = 'Refresh';
+
+      if (!response.ok) {
+        showNotice(await parseJsonError(response), true);
+        return;
+      }
+
+      const data = await response.json();
+      players = data.players || [];
+      renderTable();
+      showNotice('Player list loaded.');
+    }
+
+    async function downloadRosterCsv() {
+      downloadCsv.disabled = true;
+      downloadCsv.textContent = 'Downloading...';
+
+      let response;
+      try {
+        response = await fetch('/api/export', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: activePassword })
+        });
+      } catch {
+        showNotice('Could not connect to the server.', true);
+        downloadCsv.disabled = false;
+        downloadCsv.textContent = 'Download CSV';
+        return;
+      }
+
+      downloadCsv.disabled = false;
+      downloadCsv.textContent = 'Download CSV';
+
+      if (!response.ok) {
+        showNotice(await parseJsonError(response), true);
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const date = new Date().toISOString().slice(0, 10);
+      link.href = url;
+      link.download = `player-registration-${date}.csv`;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showNotice('CSV downloaded.');
+    }
+
+    async function login() {
+      const password = adminPassword.value;
+      if (password !== adminPagePassword) {
+        showNotice('Invalid admin password.', true);
+        return;
+      }
+
+      activePassword = password;
+      loginSection.style.display = 'none';
+      adminContent.classList.add('open');
+      await loadPlayers();
+    }
+
+    loginButton.addEventListener('click', login);
+    adminPassword.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        login();
+      }
+    });
+    refreshButton.addEventListener('click', loadPlayers);
+    downloadCsv.addEventListener('click', downloadRosterCsv);
+  </script>
+</body>
+</html>
