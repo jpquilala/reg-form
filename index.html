@@ -206,9 +206,9 @@
       line-height: 1.25;
     }
 
-    .log-list .log-message {
+    .log-list .log-name {
       font-size: 0.84rem;
-      font-weight: 400;
+      font-weight: 700;
     }
 
     .log-list span {
@@ -1154,7 +1154,7 @@
       if (summary.recentLogs && summary.recentLogs.length) {
         systemLogs.innerHTML = summary.recentLogs.map((log) => `
           <li>
-            <span class="log-message">${escapeHtml(log.message)}</span>
+            <strong class="log-name">${escapeHtml(log.name)}</strong>
             <span>${escapeHtml(log.teamName)}${log.position ? ` - ${escapeHtml(log.position)}` : ''}</span>
             <span>${escapeHtml(formatDateTime(log.registeredAt))}</span>
           </li>

@@ -32,7 +32,7 @@ module.exports = async function handler(req, res) {
       recentLogs: (data || []).slice(0, 10).map((player) => ({
         id: player.id,
         registeredAt: player.registered_at,
-        message: `New player registration: ${player.first_name || ''} ${player.last_name || ''}`.trim(),
+        name: `${player.first_name || ''} ${player.last_name || ''}`.trim(),
         teamName: player.team_name || '',
         position: player.player_position || ''
       }))
