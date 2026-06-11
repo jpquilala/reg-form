@@ -710,7 +710,13 @@
             <h3 class="form-group-title">Team & Uniform</h3>
             <div class="field">
               <label for="teamName">Team Name</label>
-              <input id="teamName" name="teamName" required>
+              <div class="custom-select" id="teamNameSelect">
+                <input id="teamName" name="teamName" type="hidden" required>
+                <button class="custom-select-toggle" type="button" id="teamNameToggle" aria-haspopup="listbox" aria-expanded="false">
+                  <span id="teamNameLabel">Select team</span>
+                </button>
+                <ul class="custom-select-menu" id="teamNameMenu" role="listbox" aria-label="Team Name"></ul>
+              </div>
             </div>
 
             <div class="field">
@@ -894,6 +900,11 @@
     const resetForm = document.querySelector('#resetForm');
     const birthDate = document.querySelector('#birthDate');
     const age = document.querySelector('#age');
+    const teamName = document.querySelector('#teamName');
+    const teamNameSelect = document.querySelector('#teamNameSelect');
+    const teamNameToggle = document.querySelector('#teamNameToggle');
+    const teamNameLabel = document.querySelector('#teamNameLabel');
+    const teamNameMenu = document.querySelector('#teamNameMenu');
     const position = document.querySelector('#position');
     const positionSelect = document.querySelector('#positionSelect');
     const positionToggle = document.querySelector('#positionToggle');
@@ -931,6 +942,14 @@
       'Small Forward',
       'Power Forward',
       'Center'
+    ];
+    const teamOptions = [
+      'BLACK DRAGONS',
+      'WHITE SPARTANS',
+      'GOLDEN LIONS',
+      'GREEN LANCERS',
+      'BLUE TITANS',
+      'RED STALLIONS'
     ];
     const sizeOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
@@ -1004,6 +1023,15 @@
       return options;
     }
     const customSelects = [
+      {
+        input: teamName,
+        label: teamNameLabel,
+        menu: teamNameMenu,
+        options: teamOptions,
+        placeholder: 'Select team',
+        root: teamNameSelect,
+        toggle: teamNameToggle
+      },
       {
         input: position,
         label: positionLabel,
@@ -1196,9 +1224,15 @@
       const player = playerFromForm();
       const submitButton = form.querySelector('button[type="submit"]');
 
+      if (!player.teamName) {
+        showNotice('Select team.', true);
+        openCustomSelect(customSelects[0]);
+        return;
+      }
+
       if (!player.position) {
         showNotice('Select position.', true);
-        openCustomSelect(customSelects[0]);
+        openCustomSelect(customSelects[1]);
         return;
       }
 
