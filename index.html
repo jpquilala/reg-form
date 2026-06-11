@@ -1204,16 +1204,26 @@
       renderSummary(await response.json());
     }
 
+    function todayDateInputValue() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
     function calculateAge(value) {
       if (!value) return '';
-      const born = new Date(`${value}T00:00:00`);
+      const [year, month, day] = value.split('-').map(Number);
+      const born = new Date(year, month - 1, day);
       const today = new Date();
+      if (!Number.isFinite(born.getTime()) || born > today) return '';
       let years = today.getFullYear() - born.getFullYear();
       const monthDiff = today.getMonth() - born.getMonth();
       if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < born.getDate())) {
         years -= 1;
       }
-      return Number.isFinite(years) ? years : '';
+      return Number.isFinite(years) && years >= 0 ? years : '';
     }
 
     function playerFromForm() {
@@ -1256,8 +1266,11 @@
 
     birthDate.addEventListener('change', () => {
       const value = calculateAge(birthDate.value);
-      if (value) age.value = value;
+      age.value = value;
     });
+
+    birthDate.max = todayDateInputValue();
+    age.value = calculateAge(birthDate.value);
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
