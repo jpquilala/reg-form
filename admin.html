@@ -434,7 +434,7 @@
       const data = await response.json();
       players = data.players || [];
       renderTable();
-      showNotice('Player list loaded.');
+      showNotice(data.warning || 'Player list loaded.', Boolean(data.warning));
     }
 
     async function downloadRosterCsv() {

@@ -2,7 +2,7 @@ const { csvCell, getSupabase, parseBody, publicError } = require('./_db');
 
 const adminPassword = 'notsoadmin.*';
 
-const columns = [
+const baseColumns = [
   ['registered_at', 'Registered At'],
   ['first_name', 'First Name'],
   ['last_name', 'Last Name'],
@@ -15,12 +15,42 @@ const columns = [
   ['player_position', 'Position'],
   ['height', 'Height'],
   ['weight', 'Weight'],
-  ['jersey_size', 'Jersey Size'],
-  ['short_size', 'Short Size'],
-  ['work_business', 'Work/Business'],
   ['emergency_contact', 'Emergency Contact'],
   ['address', 'Address']
 ];
+
+const optionalColumns = [
+  ['jersey_size', 'Jersey Size'],
+  ['short_size', 'Short Size'],
+  ['work_business', 'Work/Business']
+];
+
+const columns = [
+  ...baseColumns.slice(0, 12),
+  ...optionalColumns,
+  ...baseColumns.slice(12)
+];
+
+function isMissingOptionalColumn(error) {
+  return error && (error.code === '42703' || error.code === 'PGRST204');
+}
+
+async function fetchRows(supabase, selectedColumns) {
+  return supabase
+    .from('players')
+    .select(selectedColumns.map(([key]) => key).join(','))
+    .order('registered_at', { ascending: false })
+    .order('id', { ascending: false });
+}
+
+function fillOptionalColumns(rows) {
+  return (rows || []).map((row) => ({
+    jersey_size: '',
+    short_size: '',
+    work_business: '',
+    ...row
+  }));
+}
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -36,11 +66,13 @@ module.exports = async function handler(req, res) {
 
   try {
     const supabase = getSupabase();
-    const { data: rows, error } = await supabase
-      .from('players')
-      .select(columns.map(([key]) => key).join(','))
-      .order('registered_at', { ascending: false })
-      .order('id', { ascending: false });
+    let { data: rows, error } = await fetchRows(supabase, columns);
+
+    if (isMissingOptionalColumn(error)) {
+      const fallback = await fetchRows(supabase, baseColumns);
+      rows = fillOptionalColumns(fallback.data);
+      error = fallback.error;
+    }
 
     if (error) {
       throw error;
