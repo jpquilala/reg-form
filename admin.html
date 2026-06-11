@@ -75,6 +75,13 @@
       line-height: 1.55;
     }
 
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
     .section {
       margin-top: 28px;
       background: rgba(21, 21, 21, 0.92);
@@ -140,6 +147,9 @@
 
     .btn {
       min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border: 1px solid transparent;
       border-radius: 6px;
       padding: 10px 15px;
@@ -147,6 +157,7 @@
       background: linear-gradient(180deg, var(--gold-2), var(--gold));
       font-weight: 800;
       cursor: pointer;
+      text-decoration: none;
       text-transform: uppercase;
     }
 
@@ -271,6 +282,9 @@
       <div>
         <h1>Admin</h1>
         <p>Review registered players and export the roster as a CSV file.</p>
+        <div class="hero-actions">
+          <a class="btn secondary" href="/">Back to Registration</a>
+        </div>
       </div>
     </header>
 
