@@ -85,6 +85,13 @@
       line-height: 1.55;
     }
 
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
     .layout {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
@@ -116,6 +123,95 @@
       font-size: 1.12rem;
       letter-spacing: 0;
       text-transform: uppercase;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 240px 1fr 1.2fr;
+      gap: 16px;
+      padding: 20px;
+    }
+
+    .metric,
+    .team-breakdown,
+    .system-logs {
+      min-height: 160px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      padding: 16px;
+    }
+
+    .metric {
+      display: grid;
+      align-content: start;
+      gap: 16px;
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--gold-2);
+      font-size: 2.3rem;
+      line-height: 1;
+    }
+
+    .metric span,
+    .team-breakdown h3,
+    .system-logs h3 {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .clock {
+      display: grid;
+      gap: 5px;
+      color: var(--text);
+      font-size: 0.98rem;
+      line-height: 1.35;
+    }
+
+    .team-list,
+    .log-list {
+      display: grid;
+      gap: 9px;
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .team-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 9px;
+      border-bottom: 1px solid rgba(240, 216, 144, 0.12);
+      color: var(--text);
+    }
+
+    .team-list strong {
+      color: var(--gold-2);
+    }
+
+    .log-list li {
+      display: grid;
+      gap: 4px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(240, 216, 144, 0.12);
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .log-list span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .empty-state {
+      margin: 14px 0 0;
+      color: var(--muted);
     }
 
     .form {
@@ -274,6 +370,9 @@
 
     .btn {
       min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border: 1px solid transparent;
       border-radius: 6px;
       padding: 10px 15px;
@@ -281,6 +380,7 @@
       background: linear-gradient(180deg, var(--gold-2), var(--gold));
       font-weight: 800;
       cursor: pointer;
+      text-decoration: none;
       text-transform: uppercase;
     }
 
@@ -494,6 +594,10 @@
         grid-template-columns: 1fr;
       }
 
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
       .hero {
         text-align: center;
       }
@@ -549,10 +653,46 @@
       <div>
         <h1>Player Registration</h1>
         <p>Register players directly into the official online database.</p>
+        <div class="hero-actions">
+          <a class="btn secondary" href="/admin">Manage Player</a>
+        </div>
       </div>
     </header>
 
     <div class="layout">
+      <section class="section" aria-labelledby="summary-title">
+        <div class="section-header">
+          <h2 id="summary-title">Registration Summary</h2>
+          <span class="notice" id="summaryNotice" aria-live="polite"></span>
+        </div>
+        <div class="dashboard">
+          <div class="metric">
+            <div>
+              <strong id="registeredPlayerCount">0</strong>
+              <span>Registered Players</span>
+            </div>
+            <div class="clock">
+              <span id="currentDate">Loading date...</span>
+              <span id="currentTime">Loading time...</span>
+            </div>
+          </div>
+
+          <div class="team-breakdown">
+            <h3>Players by Team</h3>
+            <ul class="team-list" id="teamBreakdown">
+              <li><span>No teams yet</span><strong>0</strong></li>
+            </ul>
+          </div>
+
+          <div class="system-logs">
+            <h3>Recent System Changes</h3>
+            <ul class="log-list" id="systemLogs">
+              <li><span>No registration activity yet.</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       <section class="section" aria-labelledby="form-title">
         <div class="section-header">
           <h2 id="form-title">Registration Form</h2>
@@ -744,6 +884,12 @@
 
     const form = document.querySelector('#registrationForm');
     const notice = document.querySelector('#notice');
+    const summaryNotice = document.querySelector('#summaryNotice');
+    const registeredPlayerCount = document.querySelector('#registeredPlayerCount');
+    const currentDate = document.querySelector('#currentDate');
+    const currentTime = document.querySelector('#currentTime');
+    const teamBreakdown = document.querySelector('#teamBreakdown');
+    const systemLogs = document.querySelector('#systemLogs');
     const formMode = document.querySelector('#formMode');
     const resetForm = document.querySelector('#resetForm');
     const birthDate = document.querySelector('#birthDate');
@@ -905,6 +1051,91 @@
       }, isError ? 8000 : 2600);
     }
 
+    function showSummaryNotice(message, isError = false) {
+      summaryNotice.textContent = message;
+      summaryNotice.style.color = isError ? 'var(--danger)' : 'var(--ok)';
+      window.clearTimeout(showSummaryNotice.timer);
+      showSummaryNotice.timer = window.setTimeout(() => {
+        summaryNotice.textContent = '';
+      }, isError ? 8000 : 2600);
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function formatDateTime(value) {
+      if (!value) return '';
+      return new Intl.DateTimeFormat('en-PH', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      }).format(new Date(value));
+    }
+
+    function updateClock() {
+      const now = new Date();
+      currentDate.textContent = new Intl.DateTimeFormat('en-PH', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).format(now);
+      currentTime.textContent = new Intl.DateTimeFormat('en-PH', {
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit'
+      }).format(now);
+    }
+
+    function renderSummary(summary) {
+      registeredPlayerCount.textContent = summary.totalPlayers || 0;
+
+      if (summary.teamCounts && summary.teamCounts.length) {
+        teamBreakdown.innerHTML = summary.teamCounts.map((team) => `
+          <li>
+            <span>${escapeHtml(team.teamName)}</span>
+            <strong>${escapeHtml(team.total)}</strong>
+          </li>
+        `).join('');
+      } else {
+        teamBreakdown.innerHTML = '<li><span>No teams yet</span><strong>0</strong></li>';
+      }
+
+      if (summary.recentLogs && summary.recentLogs.length) {
+        systemLogs.innerHTML = summary.recentLogs.map((log) => `
+          <li>
+            <strong>${escapeHtml(log.message)}</strong>
+            <span>${escapeHtml(log.teamName)}${log.position ? ` - ${escapeHtml(log.position)}` : ''}</span>
+            <span>${escapeHtml(formatDateTime(log.registeredAt))}</span>
+          </li>
+        `).join('');
+      } else {
+        systemLogs.innerHTML = '<li><span>No registration activity yet.</span></li>';
+      }
+    }
+
+    async function loadSummary() {
+      let response;
+      try {
+        response = await fetch('/api/summary');
+      } catch {
+        showSummaryNotice('Could not load registration summary.', true);
+        return;
+      }
+
+      if (!response.ok) {
+        showSummaryNotice(await parseJsonError(response), true);
+        return;
+      }
+
+      renderSummary(await response.json());
+    }
+
     function calculateAge(value) {
       if (!value) return '';
       const born = new Date(`${value}T00:00:00`);
@@ -1000,6 +1231,7 @@
       resetRegistrationForm();
       showNotice('Player registered.');
       showConfirmation(player);
+      loadSummary();
     });
 
     resetForm.addEventListener('click', resetRegistrationForm);
@@ -1023,6 +1255,10 @@
       }
     });
     customSelects.forEach(createCustomSelect);
+    updateClock();
+    window.setInterval(updateClock, 1000);
+    loadSummary();
+    window.setInterval(loadSummary, 15000);
   </script>
 </body>
 </html>
