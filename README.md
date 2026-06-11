@@ -1,4 +1,4 @@
-# Velvet Masters League Player Registration
+# Player Registration
 
 Static registration page plus Vercel serverless API routes for saving player records to Supabase and exporting the roster as CSV.
 
