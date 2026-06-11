@@ -206,9 +206,9 @@
       line-height: 1.25;
     }
 
-    .log-list strong {
+    .log-list .log-message {
       font-size: 0.84rem;
-      font-weight: 700;
+      font-weight: 400;
     }
 
     .log-list span {
@@ -835,7 +835,7 @@
           </div>
 
           <div class="system-logs">
-            <h3>Recent System Changes</h3>
+            <h3>Recent Updates</h3>
             <ul class="log-list" id="systemLogs">
               <li><span>No registration activity yet.</span></li>
             </ul>
@@ -1154,7 +1154,7 @@
       if (summary.recentLogs && summary.recentLogs.length) {
         systemLogs.innerHTML = summary.recentLogs.map((log) => `
           <li>
-            <strong>${escapeHtml(log.message)}</strong>
+            <span class="log-message">${escapeHtml(log.message)}</span>
             <span>${escapeHtml(log.teamName)}${log.position ? ` - ${escapeHtml(log.position)}` : ''}</span>
             <span>${escapeHtml(formatDateTime(log.registeredAt))}</span>
           </li>
